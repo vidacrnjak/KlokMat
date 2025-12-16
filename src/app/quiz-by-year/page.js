@@ -1,11 +1,11 @@
-"use client"; // ovo nam treba jer koristimo useState i useRouter
+"use client";
 
-import { useState } from "react"; // pamtimo vrijednost koju korisnik odabere (razred/kategoriju)
-import { useRouter } from "next/navigation"; // nakon odabira odnsono kada korisnik pritisne kreni ga preusmjeravamo na drugu rutu
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function HomePage() {
+export default function QuizByYearPage() {
   const router = useRouter();
-  const [grade, setGrade] = useState("2"); // defaultna vrijednost je 2.razred dok se ne odabere drugo
+  const [grade, setGrade] = useState("2");
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-50 via-white to-stone-100">
@@ -15,9 +15,30 @@ export default function HomePage() {
       </div>
 
       <section className="w-full max-w-md rounded-3xl border border-black/5 bg-white/70 backdrop-blur-xl p-8 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.25)]">
+        {/* Gumb za povratak */}
+        <button
+          onClick={() => router.push("/")}
+          className="mb-6 flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Natrag na početnu
+        </button>
+
         <h1 className="text-center text-3xl font-semibold tracking-tight text-slate-900">
-          Dobrodošli na{" "}
-          <span className="font-extrabold tracking-wider">KLOKMAT</span>
+          Vježbanje po{" "}
+          <span className="font-extrabold tracking-wider">GODINI</span>
         </h1>
 
         <p className="mt-3 text-center text-sm leading-relaxed text-slate-600">
@@ -31,7 +52,7 @@ export default function HomePage() {
 
           <select
             value={grade}
-            onChange={(e) => setGrade(e.target.value)}  // kad se promjeni razred se sprema nova vrijednost
+            onChange={(e) => setGrade(e.target.value)}
             className="w-full rounded-2xl border border-slate-200 bg-white/90 p-3 text-slate-900 shadow-sm outline-none transition focus:border-slate-300 focus:ring-4 focus:ring-slate-200"
           >
             <option value="2">2. razred</option>
@@ -41,7 +62,7 @@ export default function HomePage() {
           </select>
 
           <button
-            onClick={() => router.push(`/quiz?grade=${encodeURIComponent(grade)}`)} // odemo na /quiz i pošaljemo za koji razred kroz URL
+            onClick={() => router.push(`/quiz-by-year/start?grade=${encodeURIComponent(grade)}`)}
             className="mt-4 w-full rounded-2xl bg-slate-900 p-3 font-medium text-white shadow-sm transition hover:bg-slate-800 active:scale-[0.99]"
           >
             Kreni
