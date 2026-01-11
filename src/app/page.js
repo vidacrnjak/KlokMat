@@ -6,23 +6,23 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-50 via-white to-stone-100">
+    <main className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[var(--klokmat-yellow-light)] via-[var(--klokmat-cream)] to-white">
       {/* Dekorativni blur elementi */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-1/3 h-72 w-72 -translate-x-1/2 rounded-full bg-slate-200/40 blur-3xl" />
-        <div className="absolute left-1/3 top-2/3 h-72 w-72 -translate-x-1/2 rounded-full bg-stone-200/40 blur-3xl" />
+        <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-[var(--klokmat-yellow)]/30 blur-3xl" />
+        <div className="absolute left-1/3 top-2/3 h-96 w-96 -translate-x-1/2 rounded-full bg-[var(--klokmat-red)]/20 blur-3xl" />
       </div>
 
-      <section className="w-full max-w-lg rounded-3xl border border-black/5 bg-white/70 backdrop-blur-xl p-10 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.25)]">
+      <section className="w-full max-w-2xl rounded-3xl border border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur-xl p-12 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
+          <h1 className="text-5xl font-semibold tracking-tight text-[var(--klokmat-text)]">
             Dobrodošli na{" "}
-            <span className="font-extrabold tracking-wider text-slate-900">
+            <span className="font-extrabold tracking-wider text-[var(--klokmat-red)]">
               KLOKMAT
             </span>
           </h1>
-          <p className="mt-4 text-slate-600 leading-relaxed">
+          <p className="mt-5 text-lg text-slate-700 leading-relaxed">
             Vježbajte zadatke iz natjecanja Klokan bez granica.
             <br />
             Odaberite način vježbanja:
@@ -30,23 +30,23 @@ export default function HomePage() {
         </div>
 
         {/* Gumbi */}
-        <div className="mt-10 space-y-4">
+        <div className="mt-12 space-y-5">
           {/* Gumb 1: Po godini */}
           <button
             onClick={() => router.push("/quiz-by-year")}
-            className="group w-full rounded-2xl border border-slate-200 bg-white/90 p-6 text-left shadow-sm transition hover:border-slate-300 hover:shadow-md active:scale-[0.99]"
+            className="group w-full rounded-2xl border-2 border-[var(--klokmat-red)]/30 bg-gradient-to-r from-[var(--klokmat-yellow)]/10 to-white hover:from-[var(--klokmat-yellow)]/20 hover:to-[var(--klokmat-yellow)]/10 p-7 text-left shadow-md transition hover:border-[var(--klokmat-red)]/50 hover:shadow-lg active:scale-[0.98]"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">
+                <h3 className="text-xl font-semibold text-[var(--klokmat-text)]">
                   Vježbaj rješavanje cijelog ispita
                 </h3>
-                <p className="mt-1 text-sm text-slate-600">
-                  Rješavajte cijeli ispit sa vremeskim ograničenjem
+                <p className="mt-2 text-base text-slate-600">
+                  Rješavajte cijeli ispit jedne godine sa vremeskim ograničenjem
                 </p>
               </div>
               <svg
-                className="h-6 w-6 text-slate-400 transition group-hover:translate-x-1"
+                className="h-7 w-7 text-[var(--klokmat-red)] transition group-hover:translate-x-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -64,19 +64,19 @@ export default function HomePage() {
           {/* Gumb 2: Po težini */}
           <button
             onClick={() => router.push("/quiz-by-difficulty")}
-            className="group w-full rounded-2xl border border-slate-200 bg-white/90 p-6 text-left shadow-sm transition hover:border-slate-300 hover:shadow-md active:scale-[0.99]"
+            className="group w-full rounded-2xl border-2 border-[var(--klokmat-red)]/30 bg-gradient-to-r from-[var(--klokmat-yellow)]/10 to-white hover:from-[var(--klokmat-yellow)]/20 hover:to-[var(--klokmat-yellow)]/10 p-7 text-left shadow-md transition hover:border-[var(--klokmat-red)]/50 hover:shadow-lg active:scale-[0.98]"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">
+                <h3 className="text-xl font-semibold text-[var(--klokmat-text)]">
                   Vježbaj po težini zadatka
                 </h3>
-                <p className="mt-1 text-sm text-slate-600">
+                <p className="mt-2 text-base text-slate-600">
                   Vježbajte zadatke po kategorijama bodova
                 </p>
               </div>
               <svg
-                className="h-6 w-6 text-slate-400 transition group-hover:translate-x-1"
+                className="h-7 w-7 text-[var(--klokmat-red)] transition group-hover:translate-x-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

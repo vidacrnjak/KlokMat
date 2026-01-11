@@ -1,43 +1,81 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TASKS } from "@/data/tasks";
 
-// Shuffle funkcija
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
+export default function QuizByYear({ grade = "2", year = "2024" }) {
   const router = useRouter();
 
-  // Odabir zadataka - random shuffle
+  // Broj zadataka i vrijeme ovisno o razredu
+  const quizConfig = useMemo(() => {
+    if (grade === "2" || grade === "3") {
+      return {
+        taskCount: { 3: 4, 4: 4, 5: 4 }, // 12 zadataka
+        duration: 60 * 60, // 60 minuta u sekundama
+      };
+    }
+    return {
+      taskCount: { 3: 8, 4: 8, 5: 8 }, // 24 zadatka
+      duration: 75 * 60, // 75 minuta
+    };
+  }, [grade]);
+
+  // Odabir zadataka
   const quizTasks = useMemo(() => {
-    const filtered = TASKS.filter(
-      (t) => t.grade === String(grade) && t.points === parseInt(difficulty)
-    );
-    return shuffle(filtered);
-  }, [grade, difficulty]);
+    const byGrade = TASKS.filter((t) => t.grade === String(grade));
+    
+    const t3 = byGrade.filter((t) => t.points === 3).slice(0, quizConfig.taskCount[3]);
+    const t4 = byGrade.filter((t) => t.points === 4).slice(0, quizConfig.taskCount[4]);
+    const t5 = byGrade.filter((t) => t.points === 5).slice(0, quizConfig.taskCount[5]);
+
+    return [...t3, ...t4, ...t5];
+  }, [grade, quizConfig]);
 
   // State
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({}); // {taskIndex: selectedOption}
   const [showExplanation, setShowExplanation] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(quizConfig.duration);
+  const [isFinished, setIsFinished] = useState(false);
 
   const currentTask = quizTasks[currentTaskIndex];
   const totalTasks = quizTasks.length;
-  const isLastTask = currentTaskIndex === totalTasks - 1;
+
+  // Timer
+  useEffect(() => {
+    if (isFinished) return;
+
+    if (timeLeft <= 0) {
+      handleFinish();
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft, isFinished]);
+
+  // Format vrijeme MM:SS
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   // Navigacija
   const goToNext = () => {
     if (currentTaskIndex < totalTasks - 1) {
       setCurrentTaskIndex((prev) => prev + 1);
+      setShowExplanation(false);
+    }
+  };
+
+  const goToPrevious = () => {
+    if (currentTaskIndex > 0) {
+      setCurrentTaskIndex((prev) => prev - 1);
       setShowExplanation(false);
     }
   };
@@ -53,24 +91,24 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
   // Izračun bodova
   const calculateTotalPoints = () => {
     let points = 0;
-    let correct = 0;
     quizTasks.forEach((task, index) => {
       if (userAnswers[index] === task.correctIndex) {
         points += task.points;
-        correct++;
       }
     });
-    return { points, correct };
+    return points;
   };
 
-  const answeredCount = Object.keys(userAnswers).length;
+  const maxScore = useMemo(
+    () => quizTasks.reduce((sum, t) => sum + t.points, 0),
+    [quizTasks]
+  );
 
-  // Završi vježbu
+  // Završi ispit
   const handleFinish = () => {
-    const { points, correct } = calculateTotalPoints();
-    router.push(
-      `/quiz-by-difficulty/results?points=${points}&correct=${correct}&total=${answeredCount}&grade=${grade}&difficulty=${difficulty}`
-    );
+    setIsFinished(true);
+    const totalPoints = calculateTotalPoints();
+    router.push(`/quiz-by-year/results?points=${totalPoints}&max=${maxScore}&grade=${grade}&year=${year}`);
   };
 
   // Provjeri ima li zadataka
@@ -81,10 +119,10 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
           Nema zadataka
         </h2>
         <p className="mt-2 text-base text-slate-700">
-          Za razred {grade} i težinu {difficulty} bodova još nisu dodani zadaci.
+          Za razred {grade} i godinu {year} još nisu dodani zadaci.
         </p>
         <button
-          onClick={() => router.push("/quiz-by-difficulty")}
+          onClick={() => router.push("/quiz-by-year")}
           className="mt-6 rounded-2xl bg-[var(--klokmat-red)] px-6 py-3 text-white hover:bg-[var(--klokmat-red-dark)]"
         >
           Natrag
@@ -98,7 +136,7 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
 
   return (
     <div className="w-full max-w-3xl rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur p-8 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
-      {/* Header */}
+      {/* Header s timerom */}
       <div className="flex items-center justify-between mb-6">
         <div className="text-base text-slate-700">
           <span className="font-semibold text-[var(--klokmat-text)]">
@@ -106,16 +144,13 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
           </span>
           {" • "}
           <span className="font-semibold text-[var(--klokmat-text)]">
-            Težina: {difficulty} boda
+            Godina: {year}
           </span>
         </div>
-
-        <button
-          onClick={handleFinish}
-          className="rounded-xl bg-[var(--klokmat-yellow)] px-4 py-2 text-sm font-semibold text-[var(--klokmat-text)] hover:bg-[var(--klokmat-yellow-dark)] transition"
-        >
-          Završi vježbu
-        </button>
+        
+        <div className={`text-xl font-bold ${timeLeft < 300 ? 'text-[var(--klokmat-red)]' : 'text-[var(--klokmat-text)]'}`}>
+          ⏱️ {formatTime(timeLeft)}
+        </div>
       </div>
 
       {/* Progress info */}
@@ -124,8 +159,7 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
           Zadatak <b className="text-[var(--klokmat-text)]">{currentTaskIndex + 1}</b> / {totalTasks}
         </span>
         <span>
-          Riješeno:{" "}
-          <b className="text-[var(--klokmat-red)]">{answeredCount}</b> / {totalTasks}
+          Bodovi: <b className="text-[var(--klokmat-red)]">{currentTask.points}</b>
         </span>
       </div>
 
@@ -145,8 +179,7 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
         {currentTask.options.map((_, idx) => {
           const isSelected = selectedAnswer === idx;
           const isCorrect = showExplanation && idx === currentTask.correctIndex;
-          const isWrongSelected =
-            showExplanation && isSelected && idx !== currentTask.correctIndex;
+          const isWrongSelected = showExplanation && isSelected && idx !== currentTask.correctIndex;
 
           return (
             <button
@@ -183,61 +216,68 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
       )}
 
       {/* Objašnjenje */}
-      {showExplanation && (
-        <div className="mb-6 rounded-2xl border-2 border-[var(--klokmat-yellow)] bg-white p-5">
-          <p className="font-semibold text-lg text-[var(--klokmat-text)]">
-            {selectedAnswer === currentTask.correctIndex ? "✅ Točno!" : "❌ Netočno"}
-          </p>
-          <p className="mt-2 text-base text-slate-700">
-            Točan odgovor:{" "}
-            <b className="text-[var(--klokmat-red)]">
-              {String.fromCharCode(65 + currentTask.correctIndex)}
-            </b>
-          </p>
+{showExplanation && (
+  <div className="mb-6 rounded-2xl border-2 border-[var(--klokmat-yellow)] bg-white p-5">
+    <p className="font-semibold text-lg text-[var(--klokmat-text)]">
+      {selectedAnswer === currentTask.correctIndex ? "✅ Točno!" : "❌ Netočno"}
+    </p>
+    <p className="mt-2 text-base text-slate-700">
+      Točan odgovor:{" "}
+      <b className="text-[var(--klokmat-red)]">
+        {String.fromCharCode(65 + currentTask.correctIndex)}
+      </b>
+    </p>
+    
+    {/* NOVO - slika objašnjenja */}
+    {currentTask.explanationImage && (
+      <div className="mt-4 overflow-hidden rounded-xl border border-[var(--klokmat-yellow)]/30">
+        <img
+          src={currentTask.explanationImage}
+          alt="Objašnjenje zadatka"
+          className="w-full h-auto"
+        />
+      </div>
+    )}
+    
+    {currentTask.explanation && (
+      <p className="mt-3 text-base text-slate-600 leading-relaxed">
+        {currentTask.explanation}
+      </p>
+    )}
+  </div>
+)}
 
-          {/* Slika objašnjenja */}
-          {currentTask.explanationImage && (
-            <div className="mt-4 overflow-hidden rounded-xl border border-[var(--klokmat-yellow)]/30">
-              <img
-                src={currentTask.explanationImage}
-                alt="Objašnjenje zadatka"
-                className="w-full h-auto"
-              />
-            </div>
-          )}
-
-          {currentTask.explanation && (
-            <p className="mt-3 text-base text-slate-600 leading-relaxed">
-              {currentTask.explanation}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Gumb sljedeći */}
-      {!isLastTask && (
+      {/* Navigacijski gumbi */}
+      <div className="flex gap-3">
         <button
-          onClick={goToNext}
-          className="w-full rounded-2xl bg-[var(--klokmat-red)] p-4 text-lg font-semibold text-white hover:bg-[var(--klokmat-red-dark)] transition"
+          onClick={goToPrevious}
+          disabled={currentTaskIndex === 0}
+          className="flex-1 rounded-2xl border-2 border-[var(--klokmat-yellow)]/50 bg-white p-3 text-base font-semibold text-[var(--klokmat-text)] hover:bg-[var(--klokmat-yellow)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition"
         >
-          Sljedeći zadatak →
+          ← Prethodni
         </button>
-      )}
 
-      {/* Ako je zadnji zadatak */}
-      {isLastTask && (
-        <button
-          onClick={handleFinish}
-          className="w-full rounded-2xl bg-[var(--klokmat-red)] p-4 text-lg font-semibold text-white hover:bg-[var(--klokmat-red-dark)] transition"
-        >
-          Završi i pogledaj rezultat
-        </button>
-      )}
+        {currentTaskIndex === totalTasks - 1 ? (
+          <button
+            onClick={handleFinish}
+            className="flex-1 rounded-2xl bg-[var(--klokmat-red)] p-3 text-base font-semibold text-white hover:bg-[var(--klokmat-red-dark)] transition"
+          >
+            Završi ispit
+          </button>
+        ) : (
+          <button
+            onClick={goToNext}
+            className="flex-1 rounded-2xl border-2 border-[var(--klokmat-yellow)]/50 bg-white p-3 text-base font-semibold text-[var(--klokmat-text)] hover:bg-[var(--klokmat-yellow)]/10 transition"
+          >
+            Sljedeći →
+          </button>
+        )}
+      </div>
 
       {/* Trenutni bodovi */}
       <p className="mt-6 text-center text-base text-slate-600">
         Trenutni bodovi:{" "}
-        <b className="text-[var(--klokmat-red)]">{calculateTotalPoints().points}</b>
+        <b className="text-[var(--klokmat-red)]">{calculateTotalPoints()}</b> / {maxScore}
       </p>
     </div>
   );
