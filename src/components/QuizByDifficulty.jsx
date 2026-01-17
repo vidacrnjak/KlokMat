@@ -2,9 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { TASKS } from "@/data/tasks";
 
-// Shuffle funkcija
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -14,87 +12,61 @@ function shuffle(arr) {
   return a;
 }
 
-export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
+export default function QuizByDifficulty({
+  grade = "2",
+  difficulty = "3",
+  tasks = [],
+}) {
   const router = useRouter();
 
-  // Odabir zadataka - random shuffle
-  const quizTasks = useMemo(() => {
-    const filtered = TASKS.filter(
-      (t) => t.grade === String(grade) && t.points === parseInt(difficulty)
-    );
-    return shuffle(filtered);
-  }, [grade, difficulty]);
+  const quizTasks = useMemo(() => shuffle(tasks), [tasks]);
 
-  // State
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState({}); // {taskIndex: selectedOption}
-  const [showExplanation, setShowExplanation] = useState(false);
+  const [picked, setPicked] = useState(null);
+  const [checked, setChecked] = useState(false);
+
+  const [correctCount, setCorrectCount] = useState(0);
+  const [points, setPoints] = useState(0);
 
   const currentTask = quizTasks[currentTaskIndex];
   const totalTasks = quizTasks.length;
   const isLastTask = currentTaskIndex === totalTasks - 1;
 
-  // Navigacija
-  const goToNext = () => {
-    if (currentTaskIndex < totalTasks - 1) {
-      setCurrentTaskIndex((prev) => prev + 1);
-      setShowExplanation(false);
-    }
-  };
-
-  // Odabir odgovora
-  const selectAnswer = (optionIndex) => {
-    setUserAnswers((prev) => ({
-      ...prev,
-      [currentTaskIndex]: optionIndex,
-    }));
-  };
-
-  // Izračun bodova
-  const calculateTotalPoints = () => {
-    let points = 0;
-    let correct = 0;
-    quizTasks.forEach((task, index) => {
-      if (userAnswers[index] === task.correctIndex) {
-        points += task.points;
-        correct++;
-      }
-    });
-    return { points, correct };
-  };
-
-  const answeredCount = Object.keys(userAnswers).length;
-
-  // Završi vježbu
-  const handleFinish = () => {
-    const { points, correct } = calculateTotalPoints();
-    router.push(
-      `/quiz-by-difficulty/results?points=${points}&correct=${correct}&total=${answeredCount}&grade=${grade}&difficulty=${difficulty}`
-    );
-  };
-
-  // Provjeri ima li zadataka
-  if (quizTasks.length === 0) {
+  if (!currentTask) {
     return (
       <div className="rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 p-8 text-center">
         <h2 className="text-xl font-semibold text-[var(--klokmat-text)]">
           Nema zadataka
         </h2>
-        <p className="mt-2 text-base text-slate-700">
-          Za razred {grade} i težinu {difficulty} bodova još nisu dodani zadaci.
-        </p>
-        <button
-          onClick={() => router.push("/quiz-by-difficulty")}
-          className="mt-6 rounded-2xl bg-[var(--klokmat-red)] px-6 py-3 text-white hover:bg-[var(--klokmat-red-dark)]"
-        >
-          Natrag
-        </button>
       </div>
     );
   }
 
-  const selectedAnswer = userAnswers[currentTaskIndex];
-  const isAnswered = selectedAnswer !== undefined;
+  const checkAnswer = () => {
+    if (picked === null) return;
+    console.log("ID:", currentTask.id);
+    console.log("correctAnswer iz baze:", currentTask.correctIndex + 1);
+    console.log("correctIndex:", currentTask.correctIndex);
+    console.log("picked:", picked);
+    if (picked === currentTask.correctIndex) {
+      setCorrectCount((c) => c + 1);
+      setPoints((p) => p + currentTask.points);
+    }
+
+    setChecked(true);
+  };
+
+  const next = () => {
+    setPicked(null);
+    setChecked(false);
+    setCurrentTaskIndex((i) => i + 1);
+  };
+
+  const finishQuiz = () => {
+    router.push(
+      `/quiz-by-difficulty/results?points=${points}&correct=${correctCount}&total=${totalTasks}&grade=${grade}&difficulty=${difficulty}`
+    );
+  };
 
   return (
     <div className="w-full max-w-3xl rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur p-8 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
@@ -111,21 +83,27 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
         </div>
 
         <button
-          onClick={handleFinish}
+          onClick={() => router.push("/")}
           className="rounded-xl bg-[var(--klokmat-yellow)] px-4 py-2 text-sm font-semibold text-[var(--klokmat-text)] hover:bg-[var(--klokmat-yellow-dark)] transition"
         >
-          Završi vježbu
+          Prekini
         </button>
       </div>
 
-      {/* Progress info */}
+      {/* Progress */}
       <div className="flex items-center justify-between text-base text-slate-700 mb-6">
         <span>
-          Zadatak <b className="text-[var(--klokmat-text)]">{currentTaskIndex + 1}</b> / {totalTasks}
+          Zadatak{" "}
+          <b className="text-[var(--klokmat-text)]">
+            {currentTaskIndex + 1}
+          </b>{" "}
+          / {totalTasks}
         </span>
         <span>
-          Riješeno:{" "}
-          <b className="text-[var(--klokmat-red)]">{answeredCount}</b> / {totalTasks}
+          Bodovi:{" "}
+          <b className="text-[var(--klokmat-red)]">
+            {currentTask.points}
+          </b>
         </span>
       </div>
 
@@ -134,111 +112,80 @@ export default function QuizByDifficulty({ grade = "2", difficulty = "3" }) {
         <div className="mb-6 overflow-hidden rounded-2xl border-2 border-[var(--klokmat-yellow)]/30 bg-white">
           <img
             src={currentTask.image}
-            alt={`Zadatak ${currentTaskIndex + 1}`}
+            alt="Zadatak"
             className="w-full h-auto"
           />
         </div>
       )}
 
-      {/* Odgovori */}
+      {/* Odgovori A–E */}
       <div className="space-y-3 mb-6">
-        {currentTask.options.map((_, idx) => {
-          const isSelected = selectedAnswer === idx;
-          const isCorrect = showExplanation && idx === currentTask.correctIndex;
-          const isWrongSelected =
-            showExplanation && isSelected && idx !== currentTask.correctIndex;
+        {currentTask.options.map((label, idx) => {
+          const isPicked = picked === idx;
+          const isCorrect = checked && idx === currentTask.correctIndex;
+          const isWrong =
+            checked && isPicked && idx !== currentTask.correctIndex;
 
           return (
             <button
               key={idx}
-              onClick={() => !showExplanation && selectAnswer(idx)}
+              onClick={() => !checked && setPicked(idx)}
               className={[
                 "w-full rounded-2xl border-2 p-4 text-left text-lg transition active:scale-[0.99]",
-                isSelected && !showExplanation
+                isPicked && !checked
                   ? "border-[var(--klokmat-red)] bg-[var(--klokmat-yellow)]/10"
                   : "border-[var(--klokmat-yellow)]/40 bg-white/90",
-                !showExplanation && "hover:border-[var(--klokmat-red)]/50",
+                !checked && "hover:border-[var(--klokmat-red)]/50",
                 isCorrect && "bg-green-50 border-green-400",
-                isWrongSelected && "bg-red-50 border-red-400",
-                showExplanation && "cursor-default",
+                isWrong && "bg-red-50 border-red-400",
+                checked && "cursor-default",
               ].join(" ")}
-              disabled={showExplanation}
             >
               <span className="font-semibold text-[var(--klokmat-text)]">
-                {String.fromCharCode(65 + idx)}
+                {label}
               </span>
             </button>
           );
         })}
       </div>
 
-      {/* Gumb za objašnjenje */}
-      {isAnswered && !showExplanation && (
+      {/* Provjeri */}
+      {!checked && (
         <button
-          onClick={() => setShowExplanation(true)}
-          className="w-full mb-4 rounded-2xl border-2 border-[var(--klokmat-yellow)] bg-[var(--klokmat-yellow)]/20 p-3 text-base font-semibold text-[var(--klokmat-text)] hover:bg-[var(--klokmat-yellow)]/30 transition"
+          onClick={checkAnswer}
+          disabled={picked === null}
+          className="w-full rounded-2xl bg-[var(--klokmat-red)] p-4 text-lg font-semibold text-white hover:bg-[var(--klokmat-red-dark)] disabled:opacity-50 transition"
         >
-          Prikaži objašnjenje
+          Provjeri
         </button>
       )}
 
-      {/* Objašnjenje */}
-      {showExplanation && (
-        <div className="mb-6 rounded-2xl border-2 border-[var(--klokmat-yellow)] bg-white p-5">
-          <p className="font-semibold text-lg text-[var(--klokmat-text)]">
-            {selectedAnswer === currentTask.correctIndex ? "✅ Točno!" : "❌ Netočno"}
-          </p>
-          <p className="mt-2 text-base text-slate-700">
-            Točan odgovor:{" "}
-            <b className="text-[var(--klokmat-red)]">
-              {String.fromCharCode(65 + currentTask.correctIndex)}
-            </b>
-          </p>
-
-          {/* Slika objašnjenja */}
-          {currentTask.explanationImage && (
-            <div className="mt-4 overflow-hidden rounded-xl border border-[var(--klokmat-yellow)]/30">
-              <img
-                src={currentTask.explanationImage}
-                alt="Objašnjenje zadatka"
-                className="w-full h-auto"
-              />
-            </div>
-          )}
-
-          {currentTask.explanation && (
-            <p className="mt-3 text-base text-slate-600 leading-relaxed">
-              {currentTask.explanation}
+      {/* Objašnjenje – SAMO AKO JE KRIVO */}
+      {checked &&
+        picked !== currentTask.correctIndex &&
+        currentTask.explanationImage && (
+          <div className="mt-6 rounded-2xl border-2 border-[var(--klokmat-yellow)] bg-white p-5">
+            <p className="mb-3 text-lg font-semibold text-[var(--klokmat-text)]">
+              ❌ Netočno – pogledaj rješenje
             </p>
-          )}
-        </div>
-      )}
 
-      {/* Gumb sljedeći */}
-      {!isLastTask && (
+            <img
+              src={currentTask.explanationImage}
+              alt="Rješenje zadatka"
+              className="w-full h-auto rounded-xl"
+            />
+          </div>
+        )}
+
+      {/* Sljedeći / Završi */}
+      {checked && (
         <button
-          onClick={goToNext}
-          className="w-full rounded-2xl bg-[var(--klokmat-red)] p-4 text-lg font-semibold text-white hover:bg-[var(--klokmat-red-dark)] transition"
+          onClick={isLastTask ? finishQuiz : next}
+          className="mt-6 w-full rounded-2xl border-2 border-[var(--klokmat-yellow)]/50 bg-white p-4 text-lg font-semibold text-[var(--klokmat-text)] hover:bg-[var(--klokmat-yellow)]/10 transition"
         >
-          Sljedeći zadatak →
+          {isLastTask ? "Završi" : "Sljedeći zadatak →"}
         </button>
       )}
-
-      {/* Ako je zadnji zadatak */}
-      {isLastTask && (
-        <button
-          onClick={handleFinish}
-          className="w-full rounded-2xl bg-[var(--klokmat-red)] p-4 text-lg font-semibold text-white hover:bg-[var(--klokmat-red-dark)] transition"
-        >
-          Završi i pogledaj rezultat
-        </button>
-      )}
-
-      {/* Trenutni bodovi */}
-      <p className="mt-6 text-center text-base text-slate-600">
-        Trenutni bodovi:{" "}
-        <b className="text-[var(--klokmat-red)]">{calculateTotalPoints().points}</b>
-      </p>
     </div>
   );
 }

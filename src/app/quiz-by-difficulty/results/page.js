@@ -1,17 +1,16 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { use } from "react";
 
-export default function ResultsPage({ searchParams }) {
+export default function ResultsPage() {
   const router = useRouter();
-  const params = use(searchParams);
+  const params = useSearchParams();
 
-  const points = parseInt(params.points) || 0;
-  const correct = parseInt(params.correct) || 0;
-  const total = parseInt(params.total) || 0;
-  const grade = params.grade || "2";
-  const difficulty = params.difficulty || "3";
+  const points = parseInt(params.get("points")) || 0;
+  const correct = parseInt(params.get("correct")) || 0;
+  const total = parseInt(params.get("total")) || 0;
+  const grade = params.get("grade") || "2";
+  const difficulty = params.get("difficulty") || "3";
 
   const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
 
