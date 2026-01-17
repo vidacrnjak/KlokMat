@@ -5,12 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum razinaEnum {
@@ -21,21 +22,18 @@ enum razinaEnum {
 }
 
 model Pitanje {
-  idPitanje   Int           @id @default(autoincrement())
-  tezina      Int
-  godina      Int
-  photoURL    String?
-  razina      razinaEnum
-  odgovori    Odgovor[]
-  objasnjenje Objasnjenje?
-}
-
-model Odgovor {
-  idOdgovor Int      @id @default(autoincrement())
-  idPitanje Int
-  tocnost   Boolean
-  tekst     String   @db.VarChar(30)
-  pitanje   Pitanje  @relation(fields: [idPitanje], references: [idPitanje])
+  idPitanje      Int           @id @default(autoincrement())
+  tezina         Int
+  godina         Int
+  photoURL       String?
+  razina         razinaEnum
+  answerA        String?
+  answerB        String?
+  answerC        String?
+  answerD        String?
+  answerE        String?
+  correctAnswer  Int?          // 1=A, 2=B, 3=C, 4=D, 5=E
+  objasnjenje    Objasnjenje?
 }
 
 model Objasnjenje {
