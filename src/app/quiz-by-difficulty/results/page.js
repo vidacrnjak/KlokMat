@@ -1,4 +1,4 @@
-"use client";
+"use client";  // omogućava da se kod izvršava u browseru
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -53,7 +53,7 @@ export default function ResultsPage() {
             Težina: <span className="font-semibold">{difficulty} boda</span>
           </p>
         </div>
-
+        
         <div className="mt-8 space-y-3">
           <button
             onClick={() =>

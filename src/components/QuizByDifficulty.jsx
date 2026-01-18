@@ -44,10 +44,6 @@ export default function QuizByDifficulty({
 
   const checkAnswer = () => {
     if (picked === null) return;
-    console.log("ID:", currentTask.id);
-    console.log("correctAnswer iz baze:", currentTask.correctIndex + 1);
-    console.log("correctIndex:", currentTask.correctIndex);
-    console.log("picked:", picked);
     if (picked === currentTask.correctIndex) {
       setCorrectCount((c) => c + 1);
       setPoints((p) => p + currentTask.points);
@@ -70,7 +66,6 @@ export default function QuizByDifficulty({
 
   return (
     <div className="w-full max-w-3xl rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur p-8 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="text-base text-slate-700">
           <span className="font-semibold text-[var(--klokmat-text)]">
@@ -90,7 +85,6 @@ export default function QuizByDifficulty({
         </button>
       </div>
 
-      {/* Progress */}
       <div className="flex items-center justify-between text-base text-slate-700 mb-6">
         <span>
           Zadatak{" "}
@@ -107,7 +101,6 @@ export default function QuizByDifficulty({
         </span>
       </div>
 
-      {/* Slika zadatka */}
       {currentTask.image && (
         <div className="mb-6 overflow-hidden rounded-2xl border-2 border-[var(--klokmat-yellow)]/30 bg-white">
           <img
@@ -118,7 +111,6 @@ export default function QuizByDifficulty({
         </div>
       )}
 
-      {/* Odgovori A–E */}
       <div className="space-y-3 mb-6">
         {currentTask.options.map((label, idx) => {
           const isPicked = picked === idx;
@@ -149,7 +141,6 @@ export default function QuizByDifficulty({
         })}
       </div>
 
-      {/* Provjeri */}
       {!checked && (
         <button
           onClick={checkAnswer}
@@ -160,7 +151,6 @@ export default function QuizByDifficulty({
         </button>
       )}
 
-      {/* Objašnjenje – SAMO AKO JE KRIVO */}
       {checked &&
         picked !== currentTask.correctIndex &&
         currentTask.explanationImage && (
@@ -177,7 +167,6 @@ export default function QuizByDifficulty({
           </div>
         )}
 
-      {/* Sljedeći / Završi */}
       {checked && (
         <button
           onClick={isLastTask ? finishQuiz : next}

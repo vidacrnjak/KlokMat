@@ -47,7 +47,6 @@ async function main() {
     })
   }
 
-  console.log("✅ Seed gotov – 96 Ecolier pitanja dodano")
 }
 
 main()

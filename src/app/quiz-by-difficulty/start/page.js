@@ -3,7 +3,6 @@ import { getQuizByDifficulty } from "@/data/getQuizByDifficulty";
 import { mapPitanjeToTask } from "@/data/mapPitanjeToTask";
 
 export default async function QuizByDifficultyStartPage({ searchParams }) {
-  // ✅ OVO JE BITNO
   const params = await searchParams;
 
   const grade = params.grade ?? "2";

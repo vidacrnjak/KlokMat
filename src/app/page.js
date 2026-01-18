@@ -7,14 +7,12 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[var(--klokmat-yellow-light)] via-[var(--klokmat-cream)] to-white">
-      {/* Dekorativni blur elementi */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-[var(--klokmat-yellow)]/30 blur-3xl" />
         <div className="absolute left-1/3 top-2/3 h-96 w-96 -translate-x-1/2 rounded-full bg-[var(--klokmat-red)]/20 blur-3xl" />
       </div>
 
       <section className="w-full max-w-2xl rounded-3xl border border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur-xl p-12 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
-        {/* Header */}
         <div className="text-center">
           <h1 className="text-5xl font-semibold tracking-tight text-[var(--klokmat-text)]">
             Dobrodošli na{" "}
@@ -29,9 +27,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Gumbi */}
         <div className="mt-12 space-y-5">
-          {/* Gumb 1: Po godini */}
           <button
             onClick={() => router.push("/quiz-by-year")}
             className="group w-full rounded-2xl border-2 border-[var(--klokmat-red)]/30 bg-gradient-to-r from-[var(--klokmat-yellow)]/10 to-white hover:from-[var(--klokmat-yellow)]/20 hover:to-[var(--klokmat-yellow)]/10 p-7 text-left shadow-md transition hover:border-[var(--klokmat-red)]/50 hover:shadow-lg active:scale-[0.98]"
@@ -61,7 +57,6 @@ export default function HomePage() {
             </div>
           </button>
 
-          {/* Gumb 2: Po težini */}
           <button
             onClick={() => router.push("/quiz-by-difficulty")}
             className="group w-full rounded-2xl border-2 border-[var(--klokmat-red)]/30 bg-gradient-to-r from-[var(--klokmat-yellow)]/10 to-white hover:from-[var(--klokmat-yellow)]/20 hover:to-[var(--klokmat-yellow)]/10 p-7 text-left shadow-md transition hover:border-[var(--klokmat-red)]/50 hover:shadow-lg active:scale-[0.98]"

@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  /* KlokMat boje iz loga - EKSTRA POJAČANE */
-  --klokmat-yellow: #F0C54A;  /* Bogata, zlatno-žuta */
-  --klokmat-yellow-light: #FFE89C;  /* Svjetla ali intenzivna žuta */
-  --klokmat-yellow-dark: #D4A63A;  /* Tamna zlatna */
+  /* KlokMat boje */
+  --klokmat-yellow: #F0C54A;  
+  --klokmat-yellow-light: #FFE89C;  
+  --klokmat-yellow-dark: #D4A63A; 
   
   --klokmat-red: #C74A3C;
   --klokmat-red-light: #FFE8E5;
   --klokmat-red-dark: #A83D30;
   
-  /* Neutralne boje */
-  --klokmat-cream: #FFF3D4;  /* Intenzivna žućkasta krema */
+  --klokmat-cream: #FFF3D4;  
   --klokmat-text: #2D2D2D;
 }
 

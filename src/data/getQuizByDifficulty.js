@@ -23,6 +23,5 @@ export async function getQuizByDifficulty({ grade, difficulty }) {
     },
   });
 
-  // ✅ RANDOM 10
   return shuffle(pitanja).slice(0, 10);
 }
