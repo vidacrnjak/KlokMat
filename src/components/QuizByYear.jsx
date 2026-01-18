@@ -1,42 +1,22 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { TASKS } from "@/data/tasks";
 
-export default function QuizByYear({ grade = "2", year = "2024" }) {
+export default function QuizByYear({ grade = "2", year = "2024", tasks = [] }) {
   const router = useRouter();
 
-  // Broj zadataka i vrijeme ovisno o razredu
-  const quizConfig = useMemo(() => {
-    if (grade === "2" || grade === "3") {
-      return {
-        taskCount: { 3: 4, 4: 4, 5: 4 }, // 12 zadataka
-        duration: 60 * 60, // 60 minuta u sekundama
-      };
-    }
-    return {
-      taskCount: { 3: 8, 4: 8, 5: 8 }, // 24 zadatka
-      duration: 75 * 60, // 75 minuta
-    };
-  }, [grade]);
+  // Vrijeme ovisno o razredu
+  const duration = (grade === "2" || grade === "3") ? 60 * 60 : 75 * 60;
 
-  // Odabir zadataka
-  const quizTasks = useMemo(() => {
-    const byGrade = TASKS.filter((t) => t.grade === String(grade));
-    
-    const t3 = byGrade.filter((t) => t.points === 3).slice(0, quizConfig.taskCount[3]);
-    const t4 = byGrade.filter((t) => t.points === 4).slice(0, quizConfig.taskCount[4]);
-    const t5 = byGrade.filter((t) => t.points === 5).slice(0, quizConfig.taskCount[5]);
-
-    return [...t3, ...t4, ...t5];
-  }, [grade, quizConfig]);
+  // Koristi zadatke iz props (iz baze)
+  const quizTasks = tasks;
 
   // State
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({}); // {taskIndex: selectedOption}
   const [showExplanation, setShowExplanation] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(quizConfig.duration);
+  const [timeLeft, setTimeLeft] = useState(duration);
   const [isFinished, setIsFinished] = useState(false);
 
   const currentTask = quizTasks[currentTaskIndex];
@@ -99,10 +79,7 @@ export default function QuizByYear({ grade = "2", year = "2024" }) {
     return points;
   };
 
-  const maxScore = useMemo(
-    () => quizTasks.reduce((sum, t) => sum + t.points, 0),
-    [quizTasks]
-  );
+  const maxScore = quizTasks.reduce((sum, t) => sum + t.points, 0);
 
   // Završi ispit
   const handleFinish = () => {
