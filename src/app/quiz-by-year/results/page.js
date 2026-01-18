@@ -1,16 +1,15 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { use } from "react";
 
-export default function ResultsPage({ searchParams }) {
+export default function ResultsPage() {
   const router = useRouter();
-  const params = use(searchParams);
+  const params = useSearchParams();
   
-  const points = params.points || "0";
-  const max = params.max || "0";
-  const grade = params.grade || "2";
-  const year = params.year || "2024";
+  const points = parseInt(params.get("points")) || 0;
+  const max = parseInt(params.get("max")) || 0;
+  const grade = params.get("grade") || "2";
+  const year = params.get("year") || "2024";
 
   const percentage = max > 0 ? Math.round((points / max) * 100) : 0;
 
