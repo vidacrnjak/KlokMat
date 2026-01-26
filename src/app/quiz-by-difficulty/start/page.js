@@ -5,9 +5,11 @@ import { mapPitanjeToTask } from "@/data/mapPitanjeToTask";
 export default async function QuizByDifficultyStartPage({ searchParams }) {
   const params = await searchParams;
 
+  // uzima grade i difficulty iz query-a
   const grade = params.grade ?? "2";
   const difficulty = params.difficulty ?? "3";
-
+  
+  // dohvat pitanja iz baze
   const pitanja = await getQuizByDifficulty({
     grade,
     difficulty,

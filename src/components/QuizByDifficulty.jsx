@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+// vraća pomiješanu kopiju niza
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -13,25 +14,28 @@ function shuffle(arr) {
 }
 
 export default function QuizByDifficulty({
-  grade = "2",
-  difficulty = "3",
-  tasks = [],
+  grade = "2", // default razred ako nije proslijeđen
+  difficulty = "3", // default težina
+  tasks = [], // lista pitanja za kviz
 }) {
   const router = useRouter();
 
   const quizTasks = useMemo(() => shuffle(tasks), [tasks]);
 
-  const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
-  const [picked, setPicked] = useState(null);
-  const [checked, setChecked] = useState(false);
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0); // index trenutno prikazanog zadatka
+  const [picked, setPicked] = useState(null); // odabrani odgovor
+  const [checked, setChecked] = useState(false); // provjera odgovora
 
+  // statistika kviza
   const [correctCount, setCorrectCount] = useState(0);
   const [points, setPoints] = useState(0);
 
+  // trenutno pitanje i pomoćne varijable
   const currentTask = quizTasks[currentTaskIndex];
   const totalTasks = quizTasks.length;
   const isLastTask = currentTaskIndex === totalTasks - 1;
 
+  // ako nema zadataka, prikaži poruku
   if (!currentTask) {
     return (
       <div className="rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 p-8 text-center">
@@ -42,6 +46,7 @@ export default function QuizByDifficulty({
     );
   }
 
+  // provjera je li odgovor točan
   const checkAnswer = () => {
     if (picked === null) return;
     if (picked === currentTask.correctIndex) {
@@ -52,12 +57,14 @@ export default function QuizByDifficulty({
     setChecked(true);
   };
 
+  // prelazak na sljedeće pitanje
   const next = () => {
     setPicked(null);
     setChecked(false);
     setCurrentTaskIndex((i) => i + 1);
   };
 
+  // kraj kviza
   const finishQuiz = () => {
     router.push(
       `/quiz-by-difficulty/results?points=${points}&correct=${correctCount}&total=${totalTasks}&grade=${grade}&difficulty=${difficulty}`

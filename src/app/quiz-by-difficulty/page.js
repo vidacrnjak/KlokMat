@@ -16,6 +16,7 @@ export default function QuizByDifficultyPage() {
       </div>
 
       <section className="w-full max-w-xl rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur-xl p-10 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
+        {/* povratak na početnu */}
         <button
           onClick={() => router.push("/")}
           className="mb-8 flex items-center gap-2 text-base text-[var(--klokmat-red)] hover:text-[var(--klokmat-red-dark)] transition"
@@ -36,16 +37,19 @@ export default function QuizByDifficultyPage() {
           Natrag na početnu
         </button>
 
+        {/* naslov */}
         <h1 className="text-center text-4xl font-semibold tracking-tight text-[var(--klokmat-text)]">
           Vježbaj po{" "}
           <span className="font-extrabold tracking-wider text-[var(--klokmat-red)]">TEŽINI</span>
         </h1>
 
+        {/* kratke upute */}
         <p className="mt-4 text-center text-base leading-relaxed text-slate-700">
           Odaberite razred i kategoriju bodova za vježbanje.
         </p>
 
         <div className="mt-10 space-y-6">
+          {/* odabir razreda */}
           <div>
             <label className="block text-base font-semibold text-[var(--klokmat-text)] mb-3">
               Razred
@@ -62,6 +66,7 @@ export default function QuizByDifficultyPage() {
             </select>
           </div>
 
+          {/* odabir težine (bodovi) */}
           <div>
             <label className="block text-base font-semibold text-[var(--klokmat-text)] mb-3">
               Težina (bodovi)
@@ -107,7 +112,8 @@ export default function QuizByDifficultyPage() {
               </button>
             </div>
           </div>
-
+          
+          {/* start kviza */}
           <button
             onClick={() =>
               router.push(
