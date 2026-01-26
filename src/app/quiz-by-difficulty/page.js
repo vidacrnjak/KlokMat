@@ -6,18 +6,16 @@ import { useRouter } from "next/navigation";
 export default function QuizByDifficultyPage() {
   const router = useRouter();
   const [grade, setGrade] = useState("2");
-  const [difficulty, setDifficulty] = useState("3"); // 3, 4, ili 5 bodova
+  const [difficulty, setDifficulty] = useState("3"); 
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[var(--klokmat-yellow-light)] via-[var(--klokmat-cream)] to-white">
-      {/* Dekorativni blur elementi */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-[var(--klokmat-yellow)]/30 blur-3xl" />
         <div className="absolute left-1/3 top-2/3 h-96 w-96 -translate-x-1/2 rounded-full bg-[var(--klokmat-red)]/20 blur-3xl" />
       </div>
 
       <section className="w-full max-w-xl rounded-3xl border-2 border-[var(--klokmat-red)]/20 bg-white/80 backdrop-blur-xl p-10 shadow-[0_20px_60px_-20px_rgba(199,74,60,0.3)]">
-        {/* Gumb za povratak */}
         <button
           onClick={() => router.push("/")}
           className="mb-8 flex items-center gap-2 text-base text-[var(--klokmat-red)] hover:text-[var(--klokmat-red-dark)] transition"
@@ -48,7 +46,6 @@ export default function QuizByDifficultyPage() {
         </p>
 
         <div className="mt-10 space-y-6">
-          {/* Odabir razreda */}
           <div>
             <label className="block text-base font-semibold text-[var(--klokmat-text)] mb-3">
               Razred
@@ -65,7 +62,6 @@ export default function QuizByDifficultyPage() {
             </select>
           </div>
 
-          {/* Odabir težine */}
           <div>
             <label className="block text-base font-semibold text-[var(--klokmat-text)] mb-3">
               Težina (bodovi)
@@ -112,7 +108,6 @@ export default function QuizByDifficultyPage() {
             </div>
           </div>
 
-          {/* Gumb Kreni */}
           <button
             onClick={() =>
               router.push(

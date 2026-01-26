@@ -2,8 +2,6 @@ const { PrismaClient } = require("../src/generated/prisma")
 const prisma = new PrismaClient()
 
 async function main() {
-  // 🔄 Reset auto-increment ID-a za Objasnjenje
-  console.log("🔄 Resetiram idObjasnjenje na 1...")
 
   await prisma.$executeRawUnsafe(`
     SELECT setval(
@@ -39,7 +37,6 @@ async function main() {
     data,
   })
 
-  console.log("✅ Objašnjenja dodana – bez brisanja pitanja ili objašnjenja")
 }
 
 main()

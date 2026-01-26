@@ -4,7 +4,6 @@ const fs = require("fs")
 const path = require("path")
 
 async function main() {
-  // First, get all Ecolier questions to know their IDs
   const ecolierPitanja = await prisma.pitanje.findMany({
     where: {
       razina: "Ecolier",
@@ -18,7 +17,6 @@ async function main() {
   console.log(`Found ${ecolierPitanja.length} Ecolier questions`)
 
   if (ecolierPitanja.length === 0) {
-    console.log("⚠️  No Ecolier questions found. Please run seed-ecolier.js first.")
     return
   }
 
@@ -40,14 +38,12 @@ async function main() {
       const filename = `${set.prefix}${String(index).padStart(2, "0")}rj.png`
       const filePath = path.join(projectRoot, "public", "tasks", "ecolier", set.folder, filename)
 
-      // Check if the explanation file exists
       if (fs.existsSync(filePath)) {
         data.push({
           idPitanje: pitanje.idPitanje,
           photoURL: `tasks/ecolier/${set.folder}/${filename}`,
         })
       } else {
-        console.log(`⚠️  File not found: ${filename} - using default`)
         data.push({
           idPitanje: pitanje.idPitanje,
           photoURL: `tasks/ecolier/nema_objasnjenja.png`,

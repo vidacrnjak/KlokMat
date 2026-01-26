@@ -41,7 +41,6 @@ async function main() {
     })
   }
 
-  console.log("✅ Seed gotov – 96 pitanja dodano")
 }
 
 main()
