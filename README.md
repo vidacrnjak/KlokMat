@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KlokMat - Upute za pokretanje projekta
 
-## Getting Started
+Web-aplikacija za vježbanje i pripremu zadataka iz natjecanja "Klokan bez granica"
 
-First, run the development server:
+## Preduvjeti
+
+- Node.js (verzija 18 ili novija) - preuzmi sa https://nodejs.org/
+- npm (dolazi s Node.js instalacijom)
+- Git (za kloniranje repozitorija)
+
+**Napomena:** PostgreSQL baza se nalazi u cloudu (Neon), nije potrebna lokalna instalacija baze podataka.
+
+## Instalacija i pokretanje
+
+### 1. Kloniranje repozitorija
+
+```bash
+git clone https://github.com/vidacrnjak/KlokMat
+cd klokmat
+```
+
+### 2. Instalacija paketa
+
+```bash
+npm install
+```
+
+_Napomena: Instalacija može potrajati nekoliko minuta._
+
+### 3. Konfiguracija baze podataka
+
+Kreirajte `.env` datoteku u root folderu projekta (uz package.json) i kopirajte sadržaj iz priložene env datoteke.
+
+Sadržaj `.env` datoteke:
+
+```
+DATABASE_URL="postgresql://neondb_owner:npg_xoqSrj9ZVeH4@ep-soft-heart-agrw5eid-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+
+```
+
+**Prisupne podatke za bazu dobili ste u zasebnoj datoteci putem emaila.**
+
+### 4. Inicijalizacija Prisma klijenta
+
+```bash
+npx prisma generate
+```
+
+Ovaj korak generira Prisma klijent koji omogućava komunikaciju s bazom podataka.
+
+### 5. Pokretanje aplikacije
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aplikacija će biti pokrenuta na: **http://localhost:3000**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Otvorite browser i unesite gornji URL.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Pregled baze podataka (opcionalno)
 
-## Learn More
+Za pregled sadržaja baze podataka možete koristiti Prisma Studio:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx prisma studio
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Otvara se na: http://localhost:5555
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Funkcionalnosti
 
-## Deploy on Vercel
+Aplikacija omogućuje dva načina vježbanja:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Vježbanje po razredima** - Rješavanje cjelokupnog natjecanja s vremenskim ograničenjem:
+   - 2.-3. razred: 60 minuta
+   - 4.-5. razred: 75 minuta
+   - 6.-7. razred: 75 minuta
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Vježbanje po kategorijama bodova** - Rješavanje zadataka određene težine (3, 4 ili 5 bodova)
+
+## Tehnologije
+
+- **Next.js** - React framework
+- **React** - Frontend biblioteka
+- **PostgreSQL (Neon)** - Cloud baza podataka
+- **Prisma** - ORM za bazu podataka
+- **CSS** - Stiliziranje
+
+## Autori
+
+- Vida Crnjak
+- Lana Batinić
+- Marija Dundović
+- Ivana Vidović
