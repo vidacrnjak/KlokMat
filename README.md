@@ -29,16 +29,9 @@ _Napomena: Instalacija može potrajati nekoliko minuta._
 
 ### 3. Konfiguracija baze podataka
 
-Kreirajte `.env` datoteku u root folderu projekta (uz package.json) i kopirajte sadržaj iz priložene env datoteke.
+Kreirajte `.env` datoteku u root folderu projekta (uz package.json) i kopirajte sadržaj koji ste dobili putem emaila.
 
-Sadržaj `.env` datoteke:
-
-```
-DATABASE_URL="postgresql://neondb_owner:npg_xoqSrj9ZVeH4@ep-soft-heart-agrw5eid-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-
-```
-
-**Prisupne podatke za bazu dobili ste u zasebnoj datoteci putem emaila.**
+**Pristupne podatke za bazu dobili ste u zasebnoj datoteci putem emaila.**
 
 ### 4. Inicijalizacija Prisma klijenta
 
